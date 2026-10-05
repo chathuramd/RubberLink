@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  TAPPER
+  ESTATE_OWNER
+  FACTORY_MANAGER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum AssignmentStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RecordStatus {
+  PENDING_OWNER_APPROVAL
+  OWNER_REJECTED
+  OWNER_APPROVED
+  PENDING_FACTORY_GRADING
+  FACTORY_GRADED
+  TRANSACTION_COMPLETED
+  CANCELLED
+}
+
+enum OwnerApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum QualityGrade {
+  Q1
+  Q2
+  Q3
+}
+
+enum PredictionType {
+  ESTATE_PRE_GRADING
+  FACTORY_FINAL_GRADING
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  fullName     String
+  email        String     @unique
+  passwordHash String
+  role         Role
+  phone        String?
+  status       UserStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  ownedEstates       Estate[]                 @relation("EstateOwner")
+  tapperAssignments  TapperEstateAssignment[] @relation("TapperAssignments")
+  managedFactories   Factory[]                @relation("FactoryManager")
+  createdPrices      DailyPrice[]             @relation("PriceCreator")
+  productions        ProductionRecord[]       @relation("TapperRecords")
+  approvedRecords    ProductionRecord[]       @relation("OwnerApproval")
+  transactions       FactoryTransaction[]     @relation("TransactionManager")
+  notifications      Notification[]
+  auditLogs          AuditLog[]
+}
+
+model Estate {
+  id         Int      @id @default(autoincrement())
+  estateName String
+  location   String
+  ownerId    Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  owner       User                     @relation("EstateOwner", fields: [ownerId], references: [id])
+  assignments TapperEstateAssignment[]
+  records     ProductionRecord[]
+}
+
+model TapperEstateAssignment {
+  id                    Int              @id @default(autoincrement())
+  tapperId              Int
+  estateId              Int
+  tapperSharePercentage Decimal          @db.Decimal(5, 2)
+  ownerSharePercentage  Decimal          @db.Decimal(5, 2)
+  startDate             DateTime
+  status                AssignmentStatus @default(ACTIVE)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  tapper User   @relation("TapperAssignments", fields: [tapperId], references: [id])
+  estate Estate @relation(fields: [estateId], references: [id])
+
+  @@unique([tapperId, estateId])
+}
+
+model Factory {
+  id          Int      @id @default(autoincrement())
+  factoryName String
+  location    String
+  managerId   Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  manager      User                 @relation("FactoryManager", fields: [managerId], references: [id])
+  dailyPrices  DailyPrice[]
+  transactions FactoryTransaction[]
+  inventory    Inventory[]
+}
+
+model DailyPrice {
+  id        Int      @id @default(autoincrement())
+  factoryId Int
+  date      DateTime @db.Date
+  q1Price   Decimal  @db.Decimal(10, 2)
+  q2Price   Decimal  @db.Decimal(10, 2)
+  q3Price   Decimal  @db.Decimal(10, 2)
+  createdBy Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  factory Factory @relation(fields: [factoryId], references: [id])
+  creator User    @relation("PriceCreator", fields: [createdBy], references: [id])
+
+  @@unique([factoryId, date])
+}
+
+model ProductionRecord {
+  id                  Int                 @id @default(autoincrement())
+  tapperId            Int
+  estateId            Int
+  date                DateTime            @db.Date
+  sheetCount          Int
+  weightKg            Decimal             @db.Decimal(10, 2)
+  imageUrl            String?
+  tapperExpectedGrade QualityGrade?
+  ownerAssessedGrade  QualityGrade?
+  ownerGradeNotes     String?
+  remarks             String?
+  status              RecordStatus        @default(PENDING_OWNER_APPROVAL)
+  ownerApprovalStatus OwnerApprovalStatus @default(PENDING)
+  ownerApprovedBy     Int?
+  ownerApprovedAt     DateTime?
+  rejectionReason     String?
+  locked              Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  tapper        User                @relation("TapperRecords", fields: [tapperId], references: [id])
+  estate        Estate              @relation(fields: [estateId], references: [id])
+  ownerApprover User?               @relation("OwnerApproval", fields: [ownerApprovedBy], references: [id])
+  mlPredictions MLPrediction[]
+  transaction   FactoryTransaction?
+}
+
+model MLPrediction {
+  id                 Int            @id @default(autoincrement())
+  productionRecordId Int
+  imageUrl           String
+  predictedGrade     QualityGrade
+  confidenceScore    Decimal        @db.Decimal(5, 2)
+  modelVersion       String
+  predictionType     PredictionType
+  isLowConfidence    Boolean        @default(false)
+  createdAt          DateTime       @default(now())
+
+  productionRecord ProductionRecord @relation(fields: [productionRecordId], references: [id])
+}
+
+model FactoryTransaction {
+  id                    Int               @id @default(autoincrement())
+  productionRecordId    Int               @unique
+  factoryId             Int
+  factoryManagerId      Int
+  finalWeightKg         Decimal           @db.Decimal(10, 2)
+  mlSuggestedGrade      QualityGrade?
+  mlConfidenceScore     Decimal?          @db.Decimal(5, 2)
+  finalGrade            QualityGrade
+  pricePerKg            Decimal           @db.Decimal(10, 2)
+  totalPayment          Decimal           @db.Decimal(12, 2)
+  tapperSharePercentage Decimal           @db.Decimal(5, 2)
+  ownerSharePercentage  Decimal           @db.Decimal(5, 2)
+  tapperShareAmount     Decimal           @db.Decimal(12, 2)
+  ownerShareAmount      Decimal           @db.Decimal(12, 2)
+  gradeOverridden       Boolean           @default(false)
+  overrideReason        String?
+  inspectorNotes        String?
+  gradingChecklist      Json?
+  gradingDecisionSource String            @default("MANUAL_REVIEW")
+  transactionStatus     TransactionStatus @default(COMPLETED)
+  completedAt           DateTime?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  productionRecord ProductionRecord @relation(fields: [productionRecordId], references: [id])
+  factory          Factory          @relation(fields: [factoryId], references: [id])
+  factoryManager   User             @relation("TransactionManager", fields: [factoryManagerId], references: [id])
+}
+
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int?
+  action     String
+  entityType String
+  entityId   String?
+  oldValue   Json?
+  newValue   Json?
+  createdAt  DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model Inventory {
+  id            Int          @id @default(autoincrement())
+  factoryId     Int
+  grade         QualityGrade
+  totalWeightKg Decimal      @db.Decimal(12, 2)
+  lastUpdatedAt DateTime     @updatedAt
+
+  factory Factory @relation(fields: [factoryId], references: [id])
+
+  @@unique([factoryId, grade])
+}

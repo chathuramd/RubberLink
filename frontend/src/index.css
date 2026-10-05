@@ -1,0 +1,313 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --brand: #15803d;
+  --brand-dark: #14532d;
+  --brand-soft: #dcfce7;
+  --ink: #0f172a;
+  --muted: #64748b;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  @apply text-slate-900 antialiased;
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(34, 197, 94, 0.12), transparent 32rem),
+    radial-gradient(circle at bottom right, rgba(20, 83, 45, 0.10), transparent 34rem),
+    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 42%, #ecfdf5 100%);
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-green-600 focus:ring-4 focus:ring-green-100;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply btn bg-green-700 text-white shadow-lg shadow-green-700/20 hover:-translate-y-0.5 hover:bg-green-900 hover:shadow-xl hover:shadow-green-700/25;
+  }
+  .btn-light {
+    @apply btn border border-slate-200 bg-white text-slate-700 shadow-sm hover:-translate-y-0.5 hover:border-green-200 hover:bg-green-50 hover:text-green-800;
+  }
+  .card {
+    @apply rounded-[1.75rem] border border-white/70 bg-white/85 p-6 shadow-xl shadow-slate-200/60 backdrop-blur;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wide ring-1 ring-inset ring-black/5;
+  }
+}
+
+/* Layout */
+.app-shell { min-height: 100vh; }
+.mobile-backdrop { @apply fixed inset-0 z-30 bg-slate-950/45 backdrop-blur-sm md:hidden; }
+.sidebar {
+  @apply fixed inset-y-0 left-0 z-40 flex w-80 flex-col overflow-hidden border-r border-white/10 p-5 text-white transition duration-300 md:translate-x-0;
+  background:
+    linear-gradient(180deg, rgba(20, 83, 45, 0.98), rgba(5, 46, 22, 0.98)),
+    radial-gradient(circle at top, rgba(255,255,255,.25), transparent 24rem);
+  box-shadow: 24px 0 70px rgba(15, 23, 42, .18);
+}
+.brand-card { @apply flex items-center gap-3 rounded-3xl border border-white/10 bg-white/10 p-3 backdrop-blur transition hover:bg-white/15; }
+.brand-card b { @apply text-lg font-black tracking-tight; }
+.brand-card p { @apply text-xs text-green-100; }
+.brand-icon { @apply grid h-12 w-12 place-items-center rounded-2xl bg-green-700 text-white shadow-lg shadow-green-950/20; }
+.sidebar-nav { @apply mt-5 flex-1 overflow-y-auto pr-0; scrollbar-width: none; -ms-overflow-style: none; }
+.sidebar-nav::-webkit-scrollbar { display: none; }
+.nav-section { @apply mb-2 px-3 text-[10px] font-black uppercase tracking-[0.22em] text-green-100/75; }
+.nav-link { @apply mb-1 flex items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-extrabold text-green-50/90 transition hover:bg-white/10 hover:text-white; }
+.nav-link svg { @apply shrink-0; }
+.nav-active { @apply bg-white text-green-900 shadow-lg shadow-green-950/20 hover:bg-white hover:text-green-900; }
+.sidebar-footer { @apply mt-4 shrink-0; }
+.logout-btn { @apply flex w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-red-500/90; }
+.workspace { @apply min-h-screen md:pl-80; }
+.topbar { @apply sticky top-0 z-20 flex items-center justify-between border-b border-white/70 bg-white/80 px-4 py-3 shadow-sm shadow-slate-200/40 backdrop-blur-xl md:px-8; }
+.menu-btn { @apply rounded-2xl border border-slate-200 bg-white p-3 shadow-sm; }
+.topbar-actions { @apply flex items-center gap-3; }
+.icon-btn { @apply grid h-11 w-11 place-items-center rounded-2xl border border-slate-200 bg-white text-slate-700 shadow-sm transition hover:bg-green-50 hover:text-green-800; }
+.user-chip { @apply hidden items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2 shadow-sm md:flex; }
+.user-chip span { @apply grid h-9 w-9 place-items-center rounded-xl bg-green-700 text-xs font-black text-white; }
+.user-chip b { @apply block text-xs font-black leading-none; }
+.user-chip p { @apply mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-400; }
+.content-area { @apply p-4 md:p-8; }
+
+/* Common blocks */
+.page-head { @apply mb-7 flex flex-col gap-4 md:flex-row md:items-end md:justify-between; }
+.page-head h1 { @apply mt-1 text-3xl font-black tracking-tight text-slate-950 md:text-4xl; }
+.page-head p:not(.eyebrow) { @apply mt-2 max-w-2xl text-sm font-medium text-slate-500; }
+.eyebrow { @apply text-xs font-black uppercase tracking-[0.22em] text-green-700; }
+.page-actions { @apply flex flex-wrap gap-2; }
+.stat-card { @apply relative overflow-hidden rounded-[1.75rem] border border-white/80 bg-white/90 p-6 shadow-xl shadow-slate-200/60 backdrop-blur transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-900/10; }
+.stat-card::before { content: ''; @apply absolute inset-x-0 top-0 h-1 bg-green-700; }
+.stat-glow { @apply absolute -right-10 -top-10 h-28 w-28 rounded-full bg-green-100 opacity-70 transition group-hover:scale-125; }
+.stat-icon { @apply grid h-12 w-12 place-items-center rounded-2xl bg-green-50 text-green-700 ring-1 ring-green-100; }
+.alert { @apply mb-5 rounded-[1.5rem] border p-4 text-sm font-semibold shadow-sm; }
+.alert-info { @apply border-blue-100 bg-blue-50 text-blue-900; }
+.alert-warning { @apply border-yellow-200 bg-yellow-50 text-yellow-900; }
+.alert-danger { @apply border-red-200 bg-red-50 text-red-900; }
+.table-shell { @apply w-full overflow-x-auto rounded-[1.75rem] border border-white/80 bg-white/90 shadow-xl shadow-slate-200/60 backdrop-blur; }
+.data-table { @apply w-full text-left text-sm; min-width: 680px; }
+.data-table thead { @apply bg-slate-950 text-white; }
+.data-table th { @apply whitespace-nowrap px-5 py-4 text-xs font-black uppercase tracking-[0.12em]; }
+.data-table td { @apply border-t border-slate-100 px-5 py-4 align-top text-slate-700; }
+.data-table tbody tr { @apply transition hover:bg-green-50/60; }
+.table-empty { @apply p-10 text-center font-bold text-slate-500; }
+
+/* Public and login */
+.public-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(34,197,94,.18), transparent 22rem),
+    linear-gradient(135deg, #f8fafc, #ecfdf5 55%, #f0fdf4);
+}
+.public-nav { @apply mx-auto flex max-w-7xl items-center justify-between px-5 py-6; }
+.public-nav b { @apply text-slate-950; }
+.public-nav p { @apply text-xs font-semibold text-slate-500; }
+.hero-grid { @apply mx-auto grid max-w-7xl gap-10 px-5 py-10 md:grid-cols-[1fr_0.95fr] md:items-center md:py-20; }
+.hero-title { @apply mt-4 max-w-3xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl; }
+.hero-copy { @apply mt-5 max-w-2xl text-lg font-medium leading-8 text-slate-600; }
+.metric-row { @apply mt-10 grid max-w-xl grid-cols-3 gap-3; }
+.metric-row div { @apply rounded-3xl border border-white/80 bg-white/80 p-5 shadow-lg shadow-slate-200/50; }
+.metric-row b { @apply block text-3xl font-black text-green-700; }
+.metric-row span { @apply mt-1 block text-xs font-black uppercase tracking-wide text-slate-400; }
+.hero-console { @apply rounded-[2rem] border border-white/70 bg-slate-950 p-5 shadow-2xl shadow-green-950/25; }
+.console-top { @apply mb-4 flex gap-2; }
+.console-top span { @apply h-3 w-3 rounded-full bg-white/30; }
+.console-card { @apply rounded-3xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-950/10; }
+.console-card.dark { @apply mb-3 border-green-500/20 bg-gradient-to-br from-green-700 to-green-950 text-white; }
+.console-card p { @apply text-xs font-black uppercase tracking-[0.18em] text-slate-400; }
+.console-card.dark p { @apply text-green-100; }
+.console-card b { @apply mt-2 block text-3xl font-black; }
+.console-card small { @apply mt-2 block text-xs font-bold text-slate-500; }
+.console-card.dark small { @apply text-green-100; }
+.flow-strip { @apply mt-4 grid gap-2; }
+.flow-strip div { @apply flex items-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-3 py-3 text-sm font-bold text-white; }
+.flow-strip span { @apply grid h-7 w-7 place-items-center rounded-full bg-green-400 text-xs font-black text-green-950; }
+.login-page { @apply grid min-h-screen place-items-center p-4; background: radial-gradient(circle at 0% 0%, rgba(34,197,94,.2), transparent 28rem), linear-gradient(135deg, #f8fafc, #ecfdf5); }
+.login-shell { @apply grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/80 bg-white shadow-2xl shadow-slate-300/50 md:grid-cols-[1fr_0.88fr]; }
+.login-showcase {
+  @apply relative flex min-h-[620px] flex-col justify-between overflow-hidden p-8 text-white md:p-10;
+  background:
+    linear-gradient(165deg, rgba(15, 65, 35, 0.82) 0%, rgba(5, 46, 22, 0.94) 100%),
+    url('/assets/rubber-plantation.jpg') center/cover no-repeat;
+}
+.login-showcase::before {
+  content: '';
+  @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10;
+}
+.login-showcase > * {
+  @apply relative z-10;
+}
+.login-showcase h1 { @apply mt-3 text-4xl font-black tracking-tight md:text-5xl drop-shadow-sm; }
+.login-showcase p:not(.eyebrow) { @apply mt-4 max-w-lg text-green-50/90; }
+.showcase-grid { @apply grid gap-3 sm:grid-cols-2; }
+.showcase-grid div { @apply rounded-3xl border border-white/20 bg-white/15 p-4 shadow-lg shadow-black/10 backdrop-blur-md transition hover:bg-white/20; }
+.showcase-grid b { @apply block font-black; }
+.showcase-grid span { @apply mt-1 block text-xs font-medium text-green-100; }
+.login-card { @apply flex flex-col justify-center gap-4 p-6 md:p-10; }
+.login-card h2 { @apply text-3xl font-black tracking-tight text-slate-950; }
+.login-card label { @apply text-sm font-black text-slate-700; }
+.credential-grid { @apply mt-2 grid gap-2 sm:grid-cols-2; }
+.credential-grid button { @apply rounded-2xl border border-slate-200 bg-slate-50 p-3 text-left transition hover:border-green-200 hover:bg-green-50; }
+.credential-grid b { @apply block text-sm font-black text-slate-900; }
+.credential-grid span { @apply mt-1 block truncate text-xs font-semibold text-slate-500; }
+.workflow-section { @apply mx-auto max-w-7xl px-5 pb-20 pt-4; }
+.workflow-heading { @apply max-w-3xl; }
+.workflow-heading h2 { @apply mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-4xl; }
+.workflow-heading p:not(.eyebrow) { @apply mt-3 text-base font-medium leading-7 text-slate-600; }
+.workflow-grid { @apply mt-8 grid gap-4 md:grid-cols-5; }
+.workflow-card { @apply rounded-[1.5rem] border border-white/80 bg-white/85 p-5 shadow-xl shadow-slate-200/50 backdrop-blur; }
+.workflow-card span { @apply grid h-10 w-10 place-items-center rounded-2xl bg-green-700 text-sm font-black text-white shadow-lg shadow-green-700/20; }
+.workflow-card b { @apply mt-4 block text-base font-black text-slate-950; }
+.workflow-card p { @apply mt-2 text-sm font-medium leading-6 text-slate-500; }
+
+
+@media (max-width: 767px) {
+  .sidebar { width: min(88vw, 20rem); }
+  .page-head h1 { @apply text-2xl; }
+  .data-table th, .data-table td { @apply whitespace-nowrap px-4 py-3; }
+  .login-showcase { @apply min-h-[360px]; }
+}
+
+/* Grading transparency additions */
+.grade-card { @apply rounded-[1.5rem] border border-green-100 bg-white/90 p-4 shadow-lg shadow-slate-200/50; }
+.grade-card b { @apply mt-3 block text-base font-black text-slate-950; }
+.grade-card p { @apply mt-2 text-sm font-medium leading-6 text-slate-500; }
+.grade-pill { @apply inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-green-700 text-sm font-black text-white shadow-lg shadow-green-700/20; }
+.mini-icon { @apply grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-green-50 text-green-700 ring-1 ring-green-100; }
+.transparency-flow { @apply flex flex-wrap gap-2.5 items-center; }
+.transparency-flow div, .transparency-flow-item { @apply inline-flex items-center gap-2.5 rounded-2xl border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-sm transition hover:border-green-300 hover:bg-green-50/40; }
+.transparency-flow > div > span:first-child, .transparency-flow-num { @apply grid h-6 w-6 shrink-0 place-items-center rounded-full bg-green-700 text-[11px] font-black text-white shadow-sm shadow-green-700/25; }
+.transparency-flow-text { @apply whitespace-nowrap text-xs font-bold text-slate-700; }
+.prob-row { @apply grid grid-cols-[2rem_1fr_3.5rem] items-center gap-3 text-xs font-black; }
+.prob-row div { @apply h-2 overflow-hidden rounded-full bg-white ring-1 ring-green-100; }
+.prob-row i { @apply block h-full rounded-full bg-green-700; }
+.check-row { @apply flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-3 text-sm font-bold text-slate-700 transition hover:border-green-200 hover:bg-green-50; }
+.check-row input { @apply h-4 w-4 accent-green-700; }
+
+/* Tapper and owner grade visibility additions */
+.grade-chip { @apply mt-3 rounded-2xl px-3 py-2 ring-1 ring-inset; }
+.grade-chip span { @apply block text-[10px] font-black uppercase tracking-[0.16em]; }
+.grade-chip b { @apply mt-1 block text-xl font-black; }
+.grade-chip-set { @apply bg-green-50 text-green-900 ring-green-100; }
+.grade-chip-empty { @apply bg-slate-50 text-slate-500 ring-slate-200; }
+.grade-journey { @apply border-green-100; }
+.grade-journey-grid { @apply grid gap-3 lg:grid-cols-4; }
+.journey-step { @apply rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-sm; }
+.journey-step > span { @apply grid h-8 w-8 place-items-center rounded-full bg-green-700 text-xs font-black text-white; }
+.journey-step > b { @apply mt-3 block text-base font-black text-slate-950; }
+.journey-step > p { @apply mt-2 text-sm font-medium leading-6 text-slate-500; }
+.journey-step em { @apply mt-2 block rounded-xl bg-yellow-50 px-3 py-2 text-xs font-black not-italic text-yellow-900 ring-1 ring-yellow-200; }
+
+/* Final factory workflow cleanup */
+.profile-dot { @apply grid h-11 w-11 place-items-center rounded-2xl bg-green-700 text-xs font-black text-white shadow-sm shadow-green-700/20 transition hover:bg-green-900; }
+.blocking-card { @apply flex flex-col gap-4 rounded-[1.75rem] border border-yellow-200 bg-yellow-50 p-5 text-yellow-950 shadow-lg shadow-yellow-100/60 md:flex-row md:items-center md:justify-between; }
+.blocking-card b { @apply text-base font-black; }
+.blocking-card p { @apply mt-1 max-w-3xl text-sm font-semibold leading-6 text-yellow-900/80; }
+.ready-strip { @apply inline-flex items-center gap-2 rounded-2xl border border-green-100 bg-green-50 px-4 py-3 text-sm font-black text-green-900 shadow-sm; }
+.quality-strip { @apply grid gap-3 md:grid-cols-[repeat(3,1fr)_auto]; }
+.quality-strip div { @apply rounded-2xl border border-green-100 bg-white/90 p-4 shadow-sm; }
+.quality-strip b { @apply block text-xl font-black text-green-800; }
+.quality-strip span { @apply mt-1 block text-xs font-black uppercase tracking-wide text-slate-500; }
+.quality-strip a { @apply flex items-center justify-center rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:border-green-200 hover:bg-green-50 hover:text-green-800; }
+.section-title { @apply flex items-start gap-3; }
+.section-title > span { @apply grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-green-700 text-sm font-black text-white shadow-lg shadow-green-700/20; }
+.section-title h2 { @apply text-xl font-black tracking-tight text-slate-950; }
+.section-title p { @apply mt-1 text-sm font-medium leading-6 text-slate-500; }
+.batch-summary { @apply grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm ring-1 ring-slate-200 sm:grid-cols-2; }
+.batch-summary span { @apply block text-[10px] font-black uppercase tracking-[0.16em] text-slate-400; }
+.batch-summary b { @apply mt-1 block font-black text-slate-800; }
+.file-pick { @apply flex cursor-pointer items-center gap-3 rounded-2xl border border-dashed border-green-200 bg-green-50/60 p-4 text-green-950 transition hover:border-green-400 hover:bg-green-50; }
+.file-pick input { @apply hidden; }
+.file-pick b { @apply block text-sm font-black; }
+.file-pick p { @apply mt-1 text-xs font-semibold text-green-900/70; }
+.payment-preview { @apply grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm ring-1 ring-slate-200; }
+.payment-preview div { @apply flex items-center justify-between gap-4; }
+.payment-preview span { @apply font-bold text-slate-500; }
+.payment-preview b { @apply text-slate-950; }
+.payment-preview p { @apply border-t border-slate-200 pt-3 text-xs font-semibold leading-5 text-slate-500; }
+
+/* Polished public landing redesign */
+.pro-landing {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(34,197,94,.20), transparent 24rem),
+    radial-gradient(circle at 88% 18%, rgba(20,83,45,.14), transparent 28rem),
+    linear-gradient(135deg, #f8fafc 0%, #f0fdf4 52%, #ecfdf5 100%);
+}
+.pro-nav { @apply max-w-7xl px-5 py-3; }
+.pro-brand { @apply flex items-center gap-3 rounded-3xl px-2 py-1.5 transition hover:bg-white/50; }
+.pro-brand b { @apply text-xl font-black tracking-tight text-slate-950; }
+.pro-brand p { @apply mt-0.5 text-xs font-bold text-slate-500; }
+.pro-nav-actions { @apply flex items-center gap-3; }
+.nav-text-btn { @apply hidden rounded-2xl px-4 py-2.5 text-sm font-black text-slate-600 transition hover:bg-white hover:text-green-800 sm:inline-flex; }
+.pro-hero { @apply mx-auto grid max-w-7xl items-start gap-8 px-5 pb-8 pt-2 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:pb-12 lg:pt-3; }
+.pro-hero-copy { @apply relative pt-1; }
+.pro-hero-copy h1 { @apply mt-3 max-w-4xl text-3xl font-black leading-[1.18] tracking-tight text-slate-950 sm:text-4xl lg:text-[3.1rem]; }
+.pro-hero-copy > p:not(.eyebrow) { @apply mt-4 max-w-2xl text-base font-medium leading-8 text-slate-600 sm:text-lg; }
+.live-pill { @apply mb-3.5 inline-flex items-center gap-2 rounded-full border border-green-100 bg-white/85 px-4 py-1.5 text-xs font-black uppercase tracking-[0.14em] text-green-800 shadow-sm shadow-green-100/70 backdrop-blur; }
+.live-pill span { @apply h-2.5 w-2.5 rounded-full bg-green-500 shadow-sm shadow-green-500/60; }
+.live-pill-error { @apply border-yellow-200 bg-yellow-50 text-yellow-900; }
+.live-pill-error span { @apply bg-yellow-500 shadow-yellow-500/60; }
+.hero-actions { @apply mt-7 flex flex-wrap gap-3.5; }
+.trust-row { @apply mt-6 grid max-w-xl grid-cols-3 gap-2.5; }
+.trust-row div { @apply rounded-2xl border border-white/80 bg-white/85 p-3 shadow-md shadow-slate-200/50 backdrop-blur; }
+.trust-row b { @apply block text-2xl font-black text-green-800; }
+.trust-row span { @apply mt-0.5 block text-[10px] font-black uppercase tracking-[0.14em] text-slate-500; }
+/* Integrated prominent photo banner inside dashboard preview */
+.preview-hero-banner {
+  @apply relative mb-2.5 overflow-hidden rounded-[1.25rem] border border-white/20 shadow-md;
+  height: 115px;
+}
+.preview-banner-img {
+  @apply h-full w-full object-cover transition duration-700 group-hover:scale-105;
+}
+.preview-banner-gradient {
+  @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-black/15;
+}
+.preview-banner-badge {
+  @apply absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-slate-950/60 px-2.5 py-1 text-[11px] font-black text-white shadow-md backdrop-blur-md;
+}
+.preview-banner-content {
+  @apply absolute inset-x-0 bottom-0 z-10 flex items-end justify-between p-3 text-white;
+}
+.pro-dashboard-preview {
+  @apply relative overflow-hidden rounded-[1.75rem] border border-white/70 bg-slate-950 p-3.5 shadow-2xl shadow-green-950/25 sm:p-4;
+}
+.pro-dashboard-preview::before { content: ''; @apply pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-green-500/20 blur-3xl; }
+.pro-dashboard-preview::after { content: ''; @apply pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-emerald-300/10 blur-3xl; }
+.status-dot { @apply rounded-full px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wide ring-1 ring-inset; }
+.status-dot.ok { @apply bg-green-400/15 text-green-100 ring-green-300/30; }
+.status-dot.warn { @apply bg-yellow-400/15 text-yellow-100 ring-yellow-300/30; }
+.preview-grid { @apply relative z-10 grid grid-cols-2 gap-2.5; }
+.preview-card { @apply rounded-2xl border border-white/10 bg-white p-3 shadow-md shadow-slate-950/15; }
+.preview-card.accent { @apply bg-gradient-to-br from-green-700 to-green-950 text-white; }
+.preview-icon { @apply grid h-7 w-7 place-items-center rounded-xl bg-green-50 text-green-700 ring-1 ring-green-100; }
+.preview-card.accent .preview-icon { @apply bg-white/15 text-white ring-white/15; }
+.preview-card p { @apply mt-2 text-[10px] font-black uppercase tracking-[0.14em] text-slate-400; }
+.preview-card.accent p { @apply text-green-100; }
+.preview-card b { @apply mt-0.5 block text-xl font-black tracking-tight text-slate-950 sm:text-2xl; }
+.preview-card.accent b { @apply text-white; }
+.preview-card small { @apply mt-1 block truncate text-[11px] font-semibold text-slate-500; }
+.preview-card.accent small { @apply text-green-100; }
+.mini-flow { @apply relative z-10 mt-2.5 grid grid-cols-4 gap-1.5; }
+.mini-flow div { @apply flex items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/10 px-1.5 py-1.5 text-[11px] font-black text-white; }
+.mini-flow span { @apply grid h-5 w-5 place-items-center rounded-full bg-green-400 text-[9px] font-black text-green-950; }
+.pro-workflow { @apply pb-24 pt-0; }
+.workflow-heading.centered { @apply mx-auto max-w-3xl text-center; }
+.timeline-workflow { @apply relative mt-10 grid gap-4 lg:grid-cols-5; }
+.timeline-card { @apply relative rounded-[1.5rem] border border-white/80 bg-white/90 p-5 shadow-xl shadow-slate-200/60 backdrop-blur transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-900/10; }
+.timeline-card span { @apply inline-flex rounded-2xl bg-green-700 px-3 py-2 text-xs font-black text-white shadow-lg shadow-green-700/20; }
+.timeline-card b { @apply mt-4 block text-base font-black text-slate-950; }
+.timeline-card p { @apply mt-2 text-sm font-medium leading-6 text-slate-500; }
+@media (max-width: 640px) {
+  .pro-hero-copy h1 { @apply text-4xl; }
+  .trust-row { @apply grid-cols-1; }
+  .preview-card.wide { @apply col-span-1; }
+  .mini-flow { @apply grid-cols-2; }
+}
