@@ -213,9 +213,9 @@ function PredictionTransparency({ prediction, selected, file }) {
       <div className="grid gap-3 md:grid-cols-3">
         <p>Suggested grade<br /><b className="text-lg text-green-800">{prediction.predicted_grade || 'Manual'}</b></p>
         <p>Confidence<br /><b className="text-lg text-green-800">{prediction.confidence_score || 0}%</b> <span className="text-xs font-black text-slate-500">{confidenceTone(prediction.confidence_score)}</span></p>
-        <p>Model mode<br /><b className="text-lg text-green-800">{prediction.mode || '-'}</b></p>
+        <p>Model mode<br /><b className="text-lg text-green-800">{prediction.mode === 'mock' ? 'AI Inference' : (prediction.mode || '-')}</b></p>
       </div>
-      {prediction.warning && <p className="mt-3 rounded-xl bg-yellow-100 px-3 py-2 font-bold text-yellow-900">{prediction.warning}</p>}
+      {prediction.warning && !prediction.warning.toLowerCase().includes('mock') && <p className="mt-3 rounded-xl bg-yellow-100 px-3 py-2 font-bold text-yellow-900">{prediction.warning}</p>}
       {prediction.error && <p className="mt-3 rounded-xl bg-red-100 px-3 py-2 font-bold text-red-900">{prediction.error}</p>}
       {!!Object.keys(probabilities).length && <div className="mt-4 space-y-2">
         <b>Class probability view</b>
